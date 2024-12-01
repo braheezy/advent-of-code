@@ -8,16 +8,12 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/braheezy/advent-of-code/solutions/utils"
 )
 
 //go:embed input.txt
 var inputFile embed.FS
-
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
 
 func part1(list1, list2 []int) int {
 	sort.Ints(list1)
@@ -53,8 +49,8 @@ func part2(list1, list2 []int) int {
 }
 
 func main() {
-	file, err := inputFile.Open("inputs/day1.txt")
-	check(err)
+	file, err := inputFile.Open("input.txt")
+	utils.Check(err)
 	defer file.Close()
 
 	var list1 = make([]int, 1000)
@@ -65,9 +61,9 @@ func main() {
 	for scanner.Scan() {
 		words := strings.Fields(scanner.Text())
 		list1[i], err = strconv.Atoi(words[0])
-		check(err)
+		utils.Check(err)
 		list2[i], err = strconv.Atoi(words[1])
-		check(err)
+		utils.Check(err)
 		i++
 	}
 
