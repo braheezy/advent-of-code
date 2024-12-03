@@ -112,17 +112,3 @@ func nextMoveSafe(w1, w2 int, currentChangeState ChangeState) (bool, ChangeState
 		}
 	}
 }
-
-// func searchForSafeReport(oldReport, newReport []string) bool {
-// 	for i := 0; i < len(oldReport); i++ {
-// 		fmt.Printf("cutting report %v\n", oldReport)
-// 		newReport := slices.Delete(oldReport, i, i+1)
-// 		isSafe := reportIsSafe(newReport, false, Unknown)
-// 		fmt.Printf("new report %v is: %v\n", newReport, isSafe)
-// 		if isSafe {
-// 			return true
-// 		}
-// 	}
-
-// 	return false
-// }
