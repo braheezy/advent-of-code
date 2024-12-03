@@ -35,6 +35,9 @@ func main() {
 	state := Init
 	var leftOp, rightOp int
 	total := 0
+	foundDo := true
+	parsingDoDont := false
+	multiplyAllowed := true
 
 	for {
 		token, err := nextToken(r)
@@ -55,9 +58,35 @@ func main() {
 					r.ReadRune()
 				}
 			}
+			if token == 'd' {
+				next, err := r.Peek(4)
+				if err == io.EOF {
+					break
+				}
+				if string(next) == "on't" {
+					state = LeftParen
+					parsingDoDont = true
+					foundDo = false
+
+					r.ReadRune()
+					r.ReadRune()
+					r.ReadRune()
+					r.ReadRune()
+				} else if next[0] == 'o' {
+					state = LeftParen
+					parsingDoDont = true
+					foundDo = true
+					r.ReadRune()
+				}
+
+			}
 		case LeftParen:
 			if token == '(' {
-				state = LeftOperand
+				if parsingDoDont {
+					state = RightParen
+				} else {
+					state = LeftOperand
+				}
 			} else {
 				state = Init
 				utils.Check(r.UnreadRune())
@@ -95,9 +124,21 @@ func main() {
 			}
 		case RightParen:
 			if token == ')' {
-				total += leftOp * rightOp
+				if parsingDoDont {
+					if foundDo {
+						multiplyAllowed = true
+					} else {
+						multiplyAllowed = false
+					}
+					parsingDoDont = false
+				} else if multiplyAllowed {
+					total += leftOp * rightOp
+				}
 				state = Init
 			} else {
+				if parsingDoDont {
+					parsingDoDont = false
+				}
 				state = Init
 				utils.Check(r.UnreadRune())
 			}
