@@ -4,7 +4,6 @@ package main
 import (
 	"bufio"
 	"embed"
-	"fmt"
 	"slices"
 	"strconv"
 	"strings"
@@ -50,14 +49,11 @@ func main() {
 		if reportIsSafe(report) {
 			numSafe++
 		} else {
-			println("*******************")
 			for i := 0; i < len(report); i++ {
 				orignalReport := make([]string, len(report))
 				copy(orignalReport, report)
-				fmt.Printf("cutting report %v\n", orignalReport)
 				newReport := slices.Delete(orignalReport, i, i+1)
 				isSafe := reportIsSafe(newReport)
-				fmt.Printf("new report %v is: %v\n", newReport, isSafe)
 				if isSafe {
 					numSafe++
 					break
@@ -73,7 +69,6 @@ func main() {
 func reportIsSafe(report []string) bool {
 	isSafe := false
 	currentChangeState := Unknown
-	// toleranceHit := false
 	for i := 0; i < len(report)-1; i++ {
 		w1, _ := strconv.Atoi(report[i+1])
 		w2, _ := strconv.Atoi(report[i])
@@ -83,7 +78,6 @@ func reportIsSafe(report []string) bool {
 		}
 	}
 
-	// fmt.Printf("%v is %v\n", report, isSafe)
 	return isSafe
 }
 func nextMoveSafe(w1, w2 int, currentChangeState ChangeState) (bool, ChangeState) {
