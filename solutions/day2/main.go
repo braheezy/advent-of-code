@@ -4,6 +4,8 @@ package main
 import (
 	"bufio"
 	"embed"
+	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -24,31 +26,66 @@ const (
 func main() {
 	file, err := inputFile.Open("input.txt")
 	utils.Check(err)
-	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
 
 	numSafe := 0
 	for scanner.Scan() {
-		words := strings.Fields(scanner.Text())
-		currentChangeState := Unknown
-		isSafe := true
-		for i := 0; i < len(words)-1; i++ {
-			w1, _ := strconv.Atoi(words[i+1])
-			w2, _ := strconv.Atoi(words[i])
-			isSafe, currentChangeState = nextMoveSafe(w1, w2, currentChangeState)
-			if !isSafe {
-				break
-			}
-		}
-		if isSafe {
+		report := strings.Fields(scanner.Text())
+		if reportIsSafe(report) {
 			numSafe++
 		}
 	}
 
-	println("answer: ", numSafe)
+	println("part 1 answer: ", numSafe)
+	file.Close()
+
+	file, err = inputFile.Open("input.txt")
+	utils.Check(err)
+	scanner = bufio.NewScanner(file)
+
+	numSafe = 0
+	for scanner.Scan() {
+		report := strings.Fields(scanner.Text())
+		if reportIsSafe(report) {
+			numSafe++
+		} else {
+			println("*******************")
+			for i := 0; i < len(report); i++ {
+				orignalReport := make([]string, len(report))
+				copy(orignalReport, report)
+				fmt.Printf("cutting report %v\n", orignalReport)
+				newReport := slices.Delete(orignalReport, i, i+1)
+				isSafe := reportIsSafe(newReport)
+				fmt.Printf("new report %v is: %v\n", newReport, isSafe)
+				if isSafe {
+					numSafe++
+					break
+				}
+			}
+		}
+	}
+
+	println("part 2 answer: ", numSafe)
+	file.Close()
 }
 
+func reportIsSafe(report []string) bool {
+	isSafe := false
+	currentChangeState := Unknown
+	// toleranceHit := false
+	for i := 0; i < len(report)-1; i++ {
+		w1, _ := strconv.Atoi(report[i+1])
+		w2, _ := strconv.Atoi(report[i])
+		isSafe, currentChangeState = nextMoveSafe(w1, w2, currentChangeState)
+		if !isSafe {
+			break
+		}
+	}
+
+	// fmt.Printf("%v is %v\n", report, isSafe)
+	return isSafe
+}
 func nextMoveSafe(w1, w2 int, currentChangeState ChangeState) (bool, ChangeState) {
 	if w1 == w2 {
 		// must be changing by at least 1, unsafe!
@@ -81,3 +118,17 @@ func nextMoveSafe(w1, w2 int, currentChangeState ChangeState) (bool, ChangeState
 		}
 	}
 }
+
+// func searchForSafeReport(oldReport, newReport []string) bool {
+// 	for i := 0; i < len(oldReport); i++ {
+// 		fmt.Printf("cutting report %v\n", oldReport)
+// 		newReport := slices.Delete(oldReport, i, i+1)
+// 		isSafe := reportIsSafe(newReport, false, Unknown)
+// 		fmt.Printf("new report %v is: %v\n", newReport, isSafe)
+// 		if isSafe {
+// 			return true
+// 		}
+// 	}
+
+// 	return false
+// }
