@@ -59,8 +59,8 @@ if [ $? -ne 0 ]; then
 fi
 
 # Save the input data to the appropriate file
-mkdir -p solutions/day$DAY
-echo "$RESPONSE" > solutions/day$DAY/input.txt
+mkdir -p $YEAR/input/day$DAY
+echo "$RESPONSE" > $YEAR/input/day${DAY}/input.txt
 
 # Notify the user of success
-gum format "Input data for day $DAY saved to \`solutions/day$DAY/input.txt\`"
+gum format "Input data for day $DAY saved to \`$YEAR/input/day$DAY/input.txt\`"
